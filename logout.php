@@ -5,6 +5,7 @@ if(loggedIn()){
 		$con->close();
 		session_destroy();
 		header("Location:index.php");
+		// destroy session, and redirect to login page
 	}
 	else{
 		header("Location:index.php");

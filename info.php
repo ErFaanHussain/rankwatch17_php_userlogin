@@ -1,7 +1,7 @@
 <?php
-  include('includes/core.inc.php');
-  if(!loggedIn()){
-    header('Location:index.php');
+  include('includes/core.inc.php'); //to get session
+  if(!loggedIn()){ //check if user is logged in and session is started
+    header('Location:index.php'); //if not, redirect to login page
   }?>
 <!DOCTYPE html>
 <html lang="en">
@@ -9,12 +9,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   	<title>User Login/SignUp</title>
+    <!--Bootstrap, jQuery, Tether, Bootstrap JS, Font Awesome CDNs  -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
   <body>
+    <!-- full width bootstrap container for NavBar -->
     <div class="container-fluid px-0">
+      <!-- toggleable navbar with breakpoint at medium, 992px -->
       <nav class="navbar navbar-toggleable-md navbar-inverse bg-primary">
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#nav-content">
           <span class="navbar-toggler-icon"></span>
@@ -32,7 +35,8 @@
       </nav>
     </div>
     <?php
-     include("includes/DBConnection.inc.php");
+     include("includes/DBConnection.inc.php"); //get DB con instance
+    //  consolidated query to fetch user details, state and country altogether
      $fetch_query = "SELECT `tbl_users`.`full_name`,`tbl_users`.`email`,`tbl_users`.`mobile`,`tbl_users`.`age`,`tbl_users`.`gender`,
      `tbl_users`.`address`,`tbl_states`.`name` as stateName,`tbl_countries`.`name` as countryName
      FROM `tbl_users`,`tbl_states`,`tbl_countries` WHERE `tbl_users`.`user_id`=" . $_SESSION["user_id"] . " AND `tbl_states`.`id`=`tbl_users`.`state`
@@ -40,13 +44,17 @@
      $result = $con->query($fetch_query);
      $count = $result->num_rows;
      if($count){
-       $details = $result->fetch_assoc();
+       $details = $result->fetch_assoc(); //get the details as associative array
      }else{
        echo "Something went wrong";
      }
     ?>
+    <!-- Container for the details,  -->
     <div class="row container mt-5 mx-auto">
+      <!-- two columns of form fields -->
       <div class="col-sm-6">
+        <!-- each column is consisted of 6 grid columns -->
+        <!--  All the fields are readonly-->
           <div class="form-group row">
             <label for="name" class="col-sm-3 col-form-label">Name</label>
               <div class="col-sm-9">
@@ -72,6 +80,7 @@
               </div>
           </div>
       </div>
+      <!-- columns second -->
       <div class="col-sm-6">
         <div class="form-group row">
           <label for="age" class="col-sm-3 col-form-label">Age</label>
@@ -97,7 +106,6 @@
               <input type="text" class="form-control" id="country" value="<?php echo $details['countryName'];?>" readonly>
             </div>
         </div>
-
       </div>
     </div>
   </body>

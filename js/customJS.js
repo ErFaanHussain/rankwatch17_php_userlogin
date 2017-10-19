@@ -1,11 +1,13 @@
 $(document).ready(function(){
 	// validation START
+	//additional method fro password field , uses regex
 	$.validator.addMethod("pwcheck", function(value) {
-  	   return /^[A-Za-z0-9\d=!\-@._*]*$/.test(value) // only these
-       // && /[a-z]/.test(value) // has a lowercase letter
-       // && /\d/.test(value) // has a digit
+  	   return /^[A-Za-z0-9\d=!\-@._*]*$/.test(value) // only A-Z a-z 0-9 and !\-@._* acceptable in password
+
 	});
+	//validation of Login Form
   	var validator1 = $( "#loginForm" ).validate( {
+			//validation rules are defined for each field here
 				rules: {
 					username: {
 						required: true,
@@ -19,6 +21,7 @@ $(document).ready(function(){
 						pwcheck: true
 					}
 				},
+				//error messages corresponding each field which through a mismatch
 				messages: {
 					username: {
 						required: "Please enter your email address",
@@ -32,19 +35,25 @@ $(document).ready(function(){
 						pwcheck: "Password contains only A-Z, a-z, 0-9 and =!-@._*"
 					}
 				},
+				//where to show the error message, if any using <small> here
 				errorElement: "small",
+				//where to place the error element
 				errorPlacement: function ( error, element ) {
+					//using bootstrap validation styles to element and fields
 					error.addClass( "form-control-feedback" );
 					error.insertAfter( element );
 				},
 				success: function ( label, element ) {
+					//when validation rule passes
 					$( element ).addClass("form-control-success");
 				},
 				highlight: function ( element, errorClass, validClass ) {
+					//when validation rule fails and error message appears, using bootstrap validation styles to fields
 					$( element ).parents(".form-group").addClass("has-danger").removeClass("has-success");
 					$( element ).addClass( "form-control-danger" ).removeClass( "form-control-success" );
 				},
 				unhighlight: function ( element, errorClass, validClass ) {
+					//when validation passes, using bootstrap validation styles to fields
 					$( element ).parents( ".form-group" ).addClass( "has-success" ).removeClass( "has-danger" );
 					$( element ).next( "span" ).addClass( "form-control-success" ).removeClass( "form-control-danger" );
 				}
@@ -52,6 +61,7 @@ $(document).ready(function(){
   	   $.validator.addMethod("nameCheck",function(value){
   	   	return /^[a-zA-Z\s]*$/.test(value)
   	   });
+			 //validation of SignUp Form
   	var validator2 = $( "#signUpForm" ).validate( {
 				rules: {
 					name: {
@@ -157,48 +167,28 @@ $(document).ready(function(){
 				}
 			});
   // validation END
-  $( '#resetFormLogin').on('click', function(){
-  	validator1.resetForm();
-  	resetValidation('login');
-  });
-   $( '#resetFormSignUp').on('click', function(){
-  	validator2.resetForm();
-  	resetValidation('signup');
-  });
-  function resetValidation(context){
-  	if(context === 'login'){
-  		$( '#uid' ).parents('.form-group').removeClass("has-success has-danger");
-  		$( '#pwd' ).parents('.form-group').removeClass("has-success has-danger");
-  	}else{
-  		$( '#name' ).parents('.form-group').removeClass("has-success has-danger");
-  		$( '#regNo' ).parents('.form-group').removeClass("has-success has-danger");
-  		$( '#rollNo' ).parents('.form-group').removeClass("has-success has-danger");
-  		$( '#mobile' ).parents('.form-group').removeClass("has-success has-danger");
-  		$( '#email' ).parents('.form-group').removeClass("has-success has-danger");
-  		$( '#depttSelect' ).parents('.form-group').removeClass("has-success has-danger");
-  		$( '#courseSelect' ).parents('.form-group').removeClass("has-success has-danger");
-  		$( '#uid1' ).parents('.form-group').removeClass("has-success has-danger");
-  		$( '#pwd1' ).parents('.form-group').removeClass("has-success has-danger");
-  	}
-  }
 });
+//function fillState is called when a country is selected, to fill states dropdown using AJAX
 function fillState(){
   var country_id = $('#countrySelect').val();
-  $.post("stateAdd.php",{ country_id : country_id },
+	//using jQuery XHR for AJAX
+  jQuery.post("stateAdd.php",{ country_id : country_id },  //supplying country_id to get its states
         function(data,status){
-          if(status == 'success'){
-            if(data[0] === 'success'){
-              var select = $('#stateSelect');
+          if(status == 'success'){ //checking XHR status
+            if(data[0] === 'success'){ //checking DB retrieval status
+              var select = $('#stateSelect'); //state select,
+							//add default option and add validation style using bootstrap validation
               select.html('<option selected value="">--Select State--</option>').removeClass("form-control-danger").parent().removeClass("has-danger");
               $('#stateStatus').text('');
+							//iterating through recieved data and making option for state dropdown of each
                 for (var i=1; i<data.length; i++) {
                    select.append('<option value="' + data[i].state_id + '">' + data[i].state_name + '</option>');
                 }
-                select.focus();
+                select.focus(); //immediately focusses to state dropdown
             }
           }
           else{
-            console.log('XHR failed');
+            console.log('XHR failed'); //XHR failed message
           }
 
     }, "json");
